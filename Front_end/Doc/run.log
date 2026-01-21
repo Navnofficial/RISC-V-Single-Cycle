@@ -1,0 +1,131 @@
+Command: /home/vlsi/VLSI_Projects/RISC-V_Single_cycle/Front_end/./simv +UVM_NO_RELNOTES -l run.log
+Chronologic VCS simulator copyright 1991-2024
+Contains Synopsys proprietary information.
+Compiler version W-2024.09-SP2_Full64; Runtime version W-2024.09-SP2_Full64;  Jan 21 11:19 2026
+*Verdi* Loading libsscore_vcs202409.so
+FSDB Dumper for VCS, Release Verdi_X-2025.06-1, Linux x86_64/64bit, 07/19/2025
+(C) 1996 - 2025 by Synopsys, Inc.
+*Verdi* : Create FSDB file 'riscv.fsdb'
+*Verdi* : Begin traversing the scope (top_tb), layer (0).
+*Verdi* : End of traversing.
+
+========================================
+    RV32I Single-Cycle Processor Test    
+========================================
+
+Time=0: Applying reset
+Time=15000: Reset released
+
+Starting instruction execution...
+
+Time=15000 | PC=4 | Inst=0x00000000 | ALU_result=0 | rd=0 | wr_en=0
+Time=25000 | PC=8 | Inst=0x019806b3 | ALU_result=105 | rd=13 | wr_en=1
+Time=35000 | PC=12 | Inst=0x403402b3 | ALU_result=4294967274 | rd=5 | wr_en=1
+Time=45000 | PC=16 | Inst=0x003170b3 | ALU_result=0 | rd=1 | wr_en=1
+Time=55000 | PC=20 | Inst=0x0051e233 | ALU_result=4294967290 | rd=4 | wr_en=1
+Time=65000 | PC=24 | Inst=0x003a8b13 | ALU_result=83 | rd=22 | wr_en=1
+Time=75000 | PC=28 | Inst=0x00146493 | ALU_result=3 | rd=9 | wr_en=1
+Time=85000 | PC=32 | Inst=0x00f2a403 | ALU_result=10 | rd=8 | wr_en=1
+Time=95000 | PC=36 | Inst=0x0031a483 | ALU_result=0 | rd=9 | wr_en=1
+Time=105000 | PC=40 | Inst=0x00f2a623 | ALU_result=8 | rd=12 | wr_en=0
+Time=115000 | PC=44 | Inst=0x00e32523 | ALU_result=8 | rd=10 | wr_en=0
+Time=125000 | PC=48 | Inst=0x00948663 | ALU_result=0 | rd=12 | wr_en=0
+Time=135000 | PC=60 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=145000 | PC=64 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=155000 | PC=68 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=165000 | PC=72 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=175000 | PC=76 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=185000 | PC=80 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=195000 | PC=84 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=205000 | PC=88 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=215000 | PC=92 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=225000 | PC=96 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=235000 | PC=100 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=245000 | PC=104 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=255000 | PC=108 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=265000 | PC=112 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=275000 | PC=116 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=285000 | PC=120 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=295000 | PC=124 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=305000 | PC=128 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=315000 | PC=132 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=325000 | PC=136 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=335000 | PC=140 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=345000 | PC=144 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=355000 | PC=148 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=365000 | PC=152 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=375000 | PC=156 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=385000 | PC=160 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=395000 | PC=164 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=405000 | PC=168 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=415000 | PC=172 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=425000 | PC=176 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=435000 | PC=180 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=445000 | PC=184 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=455000 | PC=188 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=465000 | PC=192 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=475000 | PC=196 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=485000 | PC=200 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=495000 | PC=204 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+Time=505000 | PC=208 | Inst=0xxxxxxxxx | ALU_result=x | rd=x | wr_en=0
+
+========================================
+       Simulation Finished              
+========================================
+Final PC        = 208
+Last Instruction = 0xxxxxxxxx
+ALU Result      = x
+Zero Flag       = x
+Branch Signal   = 0
+
+========================================
+       Register File Contents           
+========================================
+x0  (zero) = 0
+x1  (ra)   = 0
+x2  (sp)   = 2
+x3  (gp)   = 24
+x4  (tp)   = 4294967290
+x5  (t0)   = 4294967274 (signed: -22)
+x6  (t1)   = 44
+x7  (t2)   = 4
+x8  (s0)   = 0
+x9  (s1)   = 0
+x10 (a0)   = 23
+x13 (a3)   = 105 (Expected: 105)
+x14 (a4)   = 20
+x15 (a5)   = 30
+x16 (a6)   = 40
+x21 (s5)   = 80
+x22 (s6)   = 83 (Expected: 83)
+x25 (s9)   = 65
+
+========================================
+       Data Memory Contents             
+========================================
+Note: Memory addresses are word-aligned
+Mem[0]  = 0
+Mem[1]  = 0
+Mem[2]  = 20
+Mem[3]  = 0
+Mem[6]  = 0
+Mem[13] = 0
+
+========================================
+       Test Results                     
+========================================
+✓ PASS: x13 = 105 (ADD x13,x16,x25 => 40+65)
+✓ PASS: x5 = -22 (SUB x5,x8,x3 => 2-24)
+✓ PASS: x1 = 0 (AND x1,x2,x3 => 2&24)
+✗ FAIL: x4 = -6, expected -2
+✓ PASS: x22 = 83 (ADDI x22,x21,3 => 80+3)
+✗ FAIL: x9 = 0, expected 3
+
+========================================
+
+$finish called from file "top_tb.v", line 138.
+$finish at simulation time               515000
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 515000 ps
+CPU Time:      0.160 seconds;       Data structure size:   0.5Mb
+Wed Jan 21 11:19:50 2026
