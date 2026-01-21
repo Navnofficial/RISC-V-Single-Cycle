@@ -1,0 +1,508 @@
+===========================================================
+              RISC-V RV32I INSTRUCTION FORMATS
+===========================================================
+
+Instruction width : 32 bits
+Base ISA           : RV32I
+-----------------------------------------------------------
+
+
+(A) R-TYPE  (Register–Register)
+--------------------------------
+Bit fields:
+[31:25] funct7 | [24:20] rs2 | [19:15] rs1 | [14:12] funct3 | [11:7] rd | [6:0] opcode
+
+Used for:
+- Pure ALU operations (no immediate, no memory)
+
+Instructions:
+  add     sub
+  sll     slt     sltu
+  xor     srl     sra
+  or      and
+
+Example:
+  add x3, x1, x2
+  -> x3 = x1 + x2
+
+
+-----------------------------------------------------------
+
+
+(B) I-TYPE  (Immediate / Load / JALR)
+------------------------------------
+Bit fields:
+[31:20] imm[11:0] | [19:15] rs1 | [14:12] funct3 | [11:7] rd | [6:0] opcode
+
+Used for:
+- ALU with immediate
+- Load instructions
+- Jump register
+
+Instructions:
+  addi    slti    sltiu
+  xori    ori     andi
+  slli    srli    srai
+
+  lb      lh      lw
+  lbu     lhu
+
+  jalr
+
+  ecall   ebreak
+
+Example:
+  addi x5, x5, 10
+  -> x5 = x5 + 10
+
+
+-----------------------------------------------------------
+
+
+(C) S-TYPE  (Store)
+-------------------
+Bit fields:
+[31:25] imm[11:5] | [24:20] rs2 | [19:15] rs1 | [14:12] funct3 | [11:7] imm[4:0] | [6:0] opcode
+
+Used for:
+- Store data to memory
+
+Instructions:
+  sb
+  sh
+  sw
+
+Example:
+  sw x2, 0(x1)
+  -> memory[x1 + 0] = x2
+
+
+-----------------------------------------------------------
+
+
+(D) SB-TYPE (Branch)
+--------------------
+Bit fields:
+[31] imm[12] | [30:25] imm[10:5] | [24:20] rs2 | [19:15] rs1
+[14:12] funct3 | [11:8] imm[4:1] | [7] imm[11] | [6:0] opcode
+
+Used for:
+- Conditional branches (PC-relative)
+
+Instructions:
+  beq     bne
+  blt     bge
+  bltu    bgeu
+
+Example:
+  beq x1, x2, label
+  -> if (x1 == x2) PC = PC + offset
+
+
+-----------------------------------------------------------
+
+
+(E) U-TYPE  (Upper Immediate)
+-----------------------------
+Bit fields:
+[31:12] imm[31:12] | [11:7] rd | [6:0] opcode
+
+Used for:
+- Build large constants
+- PC-relative addressing
+
+Instructions:
+  lui
+  auipc
+
+Example:
+  lui x1, 0x12345
+  -> x1 = 0x12345000
+
+
+-----------------------------------------------------------
+
+
+(F) J-TYPE  (Jump)
+------------------
+Bit fields:
+[31] imm[20] | [30:21] imm[10:1] | [20] imm[11]
+[19:12] imm[19:12] | [11:7] rd | [6:0] opcode
+
+Used for:
+- Unconditional jump + link
+
+Instructions:
+  jal
+
+Example:
+  jal x1, label
+  -> x1 = PC + 4
+     PC = PC + offset
+
+
+===========================================================
+                 QUICK DECODE FLOW (CPU VIEW)
+===========================================================
+
+Fetch Instruction
+        |
+        v
+Check opcode [6:0]
+        |
+        +--> R-type  -> ALU(rs1, rs2) -> rd
+        |
+        +--> I-type  -> ALU(rs1, imm) / LOAD / JALR
+        |
+        +--> S-type  -> STORE(rs2 -> mem[rs1 + imm])
+        |
+        +--> SB-type -> BRANCH (PC + imm)
+        |
+        +--> U-type  -> imm << 12 -> rd
+        |
+        +--> J-type  -> PC + imm, link
+
+
+===========================================================
+=====================================================================
+                  RISC-V INSTRUCTION FORMATS & IMMEDIATE GENERATION
+=====================================================================
+
+Instruction width : 32 bits
+Base ISA           : RV32I
+Stage              : Instruction Decode (ID)
+Purpose            : Convert instruction bits into usable operands
+---------------------------------------------------------------------
+
+
+1) BIT POSITIONS (COMMON TO ALL FORMATS)
+----------------------------------------
+
+Bit index (MSB → LSB):
+
+  31:25   24:20   19:15   14:12   11:7    6:0
+ +------+--------+--------+--------+-------+--------+
+ |      |        |        |        |       |        |
+ +------+--------+--------+--------+-------+--------+
+
+Full instruction:
+  [31 ......................................................... 0]
+
+Each instruction format reuses these bit positions differently.
+
+
+=====================================================================
+2) INSTRUCTION FORMATS
+=====================================================================
+
+
+(A) R-TYPE  (Register → Register)
+---------------------------------
+Format:
+  funct7 | rs2 | rs1 | funct3 | rd | opcode
+
+Used for:
+  add, sub
+  and, or, xor
+  slt, sltu
+  sll, srl, sra
+
+Meaning:
+  rs1, rs2  → input registers
+  rd        → destination register
+  funct3 +
+  funct7    → select exact ALU operation
+  opcode    → identifies R-type instruction
+
+Key property:
+  → NO immediate
+  → Pure ALU operation
+
+
+---------------------------------------------------------------------
+
+
+(B) I-TYPE  (Immediate / Load / JALR)
+------------------------------------
+Format:
+  immediate[11:0] | rs1 | funct3 | rd | opcode
+
+Used for:
+  addi, andi, ori, xori, slti
+  lb, lh, lw, lbu, lhu
+  jalr
+
+Meaning:
+  immediate → 12-bit signed constant
+  rs1       → source register
+  rd        → destination register
+
+Key property:
+  → Immediate embedded in instruction
+  → Reduces instruction count
+
+
+---------------------------------------------------------------------
+
+
+(C) S-TYPE  (Store)
+-------------------
+Format:
+  imm[11:5] | rs2 | rs1 | funct3 | imm[4:0] | opcode
+
+Used for:
+  sb, sh, sw
+
+Why immediate is split:
+  - Store has NO rd field
+  - That space is reused for immediate bits
+
+Meaning:
+  rs1        → base address register
+  rs2        → data to store
+  immediate  → offset
+
+Operation:
+  memory[rs1 + immediate] = rs2
+
+
+---------------------------------------------------------------------
+
+
+(D) SB-TYPE (Branch)
+--------------------
+Format:
+  imm[12,10:5] | rs2 | rs1 | funct3 | imm[4:1,11] | opcode
+
+Used for:
+  beq, bne
+  blt, bge
+  bltu, bgeu
+
+Key ideas:
+  - Immediate is PC-relative
+  - Immediate bits are scattered
+  - imm[0] = 0 (instruction alignment)
+
+Operation:
+  if (condition true)
+      PC = PC + immediate
+  else
+      PC = PC + 4
+
+
+=====================================================================
+3) WHAT THIS VERILOG CODE IS
+=====================================================================
+
+This is an IMMEDIATE GENERATOR (IMM-GEN).
+
+Location:
+  → Instruction Decode stage
+
+Job:
+  → Extract immediate bits
+  → Sign-extend them
+  → Output ONE clean 32-bit signed value
+
+Code:
+---------------------------------------------------------------------
+case (opcode)
+
+  7'b0000011 : immediate_ext =
+      {{20{instruction[31]}}, instruction[31:20]};
+      // I-type (LOAD)
+
+  7'b0100011 : immediate_ext =
+      {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
+      // S-type (STORE)
+
+  7'b1100011 : immediate_ext =
+      {{19{instruction[31]}},
+        instruction[31],
+        instruction[30:25],
+        instruction[11:8],
+        1'b0};
+      // SB-type (BRANCH)
+
+endcase
+---------------------------------------------------------------------
+
+
+=====================================================================
+4) WHY IMMEDIATE GENERATION IS NEEDED
+=====================================================================
+
+Problem:
+  - Immediates are located differently for each instruction type
+  - Some are split
+  - Some are PC-relative
+  - ALU cannot work with scattered bits
+
+Solution:
+  - IMM-GEN converts instruction bits into:
+        → 32-bit signed immediate
+
+Conversion:
+  Instruction encoding  →  immediate_ext (32-bit)
+
+
+=====================================================================
+5) LINE-BY-LINE UNDERSTANDING
+=====================================================================
+
+
+(1) LOAD INSTRUCTIONS (I-TYPE)
+------------------------------
+Opcode:
+  0000011
+
+Immediate bits:
+  instruction[31:20] (12 bits)
+
+Logic:
+  {{20{instruction[31]}}, instruction[31:20]}
+
+Meaning:
+  - instruction[31] = sign bit
+  - replicated 20 times → sign extension
+
+Used for:
+  address = rs1 + immediate
+
+Purpose:
+  → Compute memory address
+
+
+---------------------------------------------------------------------
+
+
+(2) STORE INSTRUCTIONS (S-TYPE)
+-------------------------------
+Opcode:
+  0100011
+
+Immediate bits:
+  imm[11:5] = instruction[31:25]
+  imm[4:0]  = instruction[11:7]
+
+Logic:
+  {{20{instruction[31]}}, instruction[31:25], instruction[11:7]}
+
+Used for:
+  address = rs1 + immediate
+  memory[address] = rs2
+
+Purpose:
+  → Store data into memory
+
+
+---------------------------------------------------------------------
+
+
+(3) BRANCH INSTRUCTIONS (SB-TYPE)
+---------------------------------
+Opcode:
+  1100011
+
+Immediate mapping:
+  imm[12]   = instruction[31]
+  imm[10:5] = instruction[30:25]
+  imm[4:1]  = instruction[11:8]
+  imm[0]    = 0
+
+Logic:
+  {{19{instruction[31]}}, instruction[31],
+    instruction[30:25], instruction[11:8], 1'b0}
+
+Why 1'b0:
+  - Instructions are aligned
+  - LSB always zero
+
+Used for:
+  PC = PC + immediate
+
+Purpose:
+  → Forward and backward branching
+
+
+=====================================================================
+6) HOW THIS HELPS THE CPU (BIG PICTURE)
+=====================================================================
+
+WITHOUT IMM-GEN:
+  - No address calculation
+  - No branches
+  - No immediate ALU ops
+  - CPU is almost useless
+
+WITH IMM-GEN:
+-------------------------------------------------
+ Instruction | Immediate used for
+-------------+-----------------------------------
+ Load        | Memory address
+ Store       | Memory address
+ Branch      | PC update
+-------------------------------------------------
+
+This block:
+  → Bridges instruction encoding and execution
+
+
+=====================================================================
+7) POSITION IN CPU PIPELINE
+=====================================================================
+
+Instruction Fetch (IF)
+        ↓
+Instruction Decode (ID)
+  ├─ Opcode decode
+  ├─ Register read
+  └─ Immediate Generator  ← THIS LOGIC
+        ↓
+Execute (EX)
+  ├─ ALU
+  ├─ Branch
+  └─ Memory access
+
+
+=====================================================================
+8) ONE-LINE FINAL UNDERSTANDING
+=====================================================================
+
+"The immediate generator reconstructs and sign-extends scattered
+RISC-V immediate fields into a 32-bit value so the ALU and PC logic
+can correctly execute loads, stores, and branches."
+
+=====================================================================
+/*
+Doc :
+    -Program Counter : 
+        -It's a special register that keeps track of which instruction the processor should execute next.
+        -What it does:
+            -Stores the memory address of the next instruction to be fetched and executed
+            -Automatically increments after each instruction fetch (typically by 4 bytes in RISC-V for 32-bit instructions)
+            -Updates during branches/jumps when the program flow changes (like if-statements, loops, function calls)
+        -Resets to a known address (usually 0x00000000) when the system is reset
+    Flow : 
+        -1. PC_out → Instruction Memory (fetch instruction at this address)
+        -2. Execute instruction
+        -3. PC_in ← PC_out + 4 (sequential execution)
+                            OR
+        -4. PC_in ← Branch/Jump target address (control flow change)
+        -5. On next clock cycle, PC_out updates to PC_in
+        -6. Repeat...
+*/
+
+//Instruction Memory block : to store the instructions
+
+/*
+DATAPATH MAPPING 
+    Instruction[6:0]     → Control Unit (opcode) 7 bits
+    Instruction[11:7]    → rd (write register - destination) 5 bits
+    Instruction[19:15]   → rs1 (source register 1) 5 bits
+    Instruction[24:20]   → rs2 (source register 2) 5 bits
+    Instruction[14:12]   → funct3 (function) 3 bits
+    Instruction[30]      → funct7 bit (function) 1 bit
+    Instruction[31:0]    → ImmGen (builds immediate) 32 bits
+*/

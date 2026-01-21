@@ -1,0 +1,65 @@
+INSTRUCTION FORMAT 
+
+All RISC-V base instructions are 32 bits wide.
+
+Bit positions:
+31 .............................................. 0
+
+COMMON FIELD:
+[6:0]   opcode   → instruction type
+
+--------------------------------------------------
+R-TYPE (Register-Register ALU)
+Format:
+31   25 24  20 19  15 14  12 11   7 6    0
+[funct7][ rs2 ][ rs1 ][funct3][  rd  ][opcode]
+
+Used for: add, sub, and, or, slt, etc.
+
+--------------------------------------------------
+I-TYPE (Immediate / Load / ALU-Imm / JALR)
+31        20 19  15 14  12 11   7 6    0
+[ imm[11:0] ][ rs1 ][funct3][  rd  ][opcode]
+
+Used for: addi, lw, jalr, etc.
+
+--------------------------------------------------
+S-TYPE (Store)
+31   25 24  20 19  15 14  12 11   7 6    0
+[ imm[11:5] ][ rs2 ][ rs1 ][funct3][ imm[4:0] ][opcode]
+
+Used for: sw, sh, sb
+
+--------------------------------------------------
+B-TYPE (Branch)
+31  30 25 24 20 19 15 14 12 11 8 7 6 0
+[imm12][imm10:5][rs2][rs1][funct3][imm4:1][imm11][opcode]
+
+Immediate rebuild:
+imm = {instr[31], instr[7], instr[30:25], instr[11:8], 0}
+
+Used for: beq, bne, blt, etc.
+
+--------------------------------------------------
+U-TYPE (LUI / AUIPC)
+31              12 11   7 6    0
+[   imm[31:12]     ][  rd  ][opcode]
+
+--------------------------------------------------
+J-TYPE (JAL)
+31 30   21 20 19   12 11   7 6    0
+[imm20][imm10:1][imm11][imm19:12][rd][opcode]
+
+Immediate rebuild:
+imm = {instr[31], instr[19:12], instr[20], instr[30:21], 0}
+
+--------------------------------------------------
+DATAPATH MAPPING (from your diagram)
+
+Instruction[6:0]     → Control Unit (opcode)
+Instruction[11:7]    → rd (write register)
+Instruction[19:15]   → rs1 (read reg1)
+Instruction[24:20]   → rs2 (read reg2)
+Instruction[14:12]   → funct3
+Instruction[30]      → funct7 bit
+Instruction[31:0]    → ImmGen (builds immediate)
